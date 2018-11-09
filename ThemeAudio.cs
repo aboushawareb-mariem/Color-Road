@@ -6,15 +6,22 @@ public class ThemeAudio : MonoBehaviour {
 
     public AudioClip MusicClip;
     public AudioSource MusicSource;
-	// Use this for initialization
-	void Start () {
+    //GameObject canvas;
+    //CanvasMethods canvasScript;
+    // Use this for initialization
+    void Start () {
+
+        //canvas = GameObject.Find("Canvas");
+        //canvasScript = canvas.GetComponent<CanvasMethods>();
+
+
         MusicSource.clip = MusicClip;
             MusicSource.Play();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if(!MusicSource.isPlaying)
+        if(!MusicSource.isPlaying) // &&  canvasScript == false
         {
             MusicSource.Play();
         }
