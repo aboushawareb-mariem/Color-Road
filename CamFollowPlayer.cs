@@ -26,4 +26,6 @@ public class CamFollowPlayer : MonoBehaviour
         float f = player.transform.position.z + offset;
         transform.position = new Vector3(-0.1922977f, 2.877439f, f);
     }
+
+    
 }

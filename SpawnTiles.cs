@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SpawnTiles : MonoBehaviour
 {
@@ -10,6 +12,7 @@ public class SpawnTiles : MonoBehaviour
     public AudioSource MusicSourceGain;
     public AudioSource MusicSourceLose;
     public AudioSource MusicSourceColorZone;
+    public Text scoreText;
 
     Material m_Material;
     public GameObject planeTransform;
@@ -19,13 +22,26 @@ public class SpawnTiles : MonoBehaviour
     private int speedCount;
     initialPlayer initialplayer;
 
+    public bool muted;
+    bool paused;
+    bool youSuckFlag;
+    GameObject pausemenu;
+    GameObject gameover;
+
     // Use this for initialization
     void Start()
     {
+        paused = false;
+        muted = false;
+        youSuckFlag = false;
         MusicSourceGain.clip = MusicClipGain;
         MusicSourceLose.clip = MusicClipLose;
         MusicSourceColorZone.clip = MusicClipColorZone;
 
+        pausemenu = GameObject.Find("PauseMenu");
+        gameover = GameObject.Find("gameOver");
+        pausemenu.SetActive(false);
+        gameover.SetActive(false);
         player = GameObject.FindGameObjectWithTag("Player");
         initialplayer = player.GetComponent<initialPlayer>();
         m_Material = GetComponent<Renderer>().material;
@@ -35,9 +51,51 @@ public class SpawnTiles : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            paused = !paused;
+        }
+
+            if (paused)
+        {
+            Time.timeScale = 0;
+            pausemenu.SetActive(true);
+        }
+        
+        if (!paused && gameover.active == false)
+        {
+            Time.timeScale = 1;
+            pausemenu.SetActive(false);
+        }
 
 
+    }
 
+    public void muteClicked()
+    {
+        muted = !muted;
+    }
+
+    public void pauseClicked()
+    {
+        paused = true;
+        pausemenu.SetActive(true);
+    }
+
+    public void resumeClicked()
+    {
+        paused = false;
+        pausemenu.SetActive(false);
+    }
+
+    public void restartClicked(string newGameLevel)
+    {
+        SceneManager.LoadScene(newGameLevel);
+    }
+
+    public void quitClicked()
+    {
+        Application.Quit();
     }
 
     void OnTriggerEnter(Collider other)
@@ -47,8 +105,11 @@ public class SpawnTiles : MonoBehaviour
         if (other.gameObject.CompareTag("Spawner"))
         {
             //   Debug.Log("sadder");
+            if(muted == false)
+            {
 
             MusicSourceColorZone.Play();
+            }
             SpawnTile();
             m_Material.color = other.gameObject.GetComponent<Renderer>().material.color;
 
@@ -74,9 +135,13 @@ public class SpawnTiles : MonoBehaviour
             Destroy(collision.transform.gameObject);
             if (collision.gameObject.GetComponent<Renderer>().material.color == m_Material.color)
             {
+                if(muted == false)
+                {
                 MusicSourceGain.Play();
+                }
                 score += 10;
                 speedCount ++;
+                youSuckFlag = true;
                 if (speedCount >= 5)
                 {
                     speedCount =0;
@@ -84,11 +149,16 @@ public class SpawnTiles : MonoBehaviour
                     
                     Debug.Log("speed: " + initialplayer.speed);
                 }
+                scoreText.text = "Score: " + score;
             }
             else
             {
-
+                
+                if (muted == false)
+                {
                 MusicSourceLose.Play();
+
+                }
                 speedCount--;
                 if(speedCount < 0)
                 {
@@ -97,10 +167,20 @@ public class SpawnTiles : MonoBehaviour
                 if (score == 1)
                 {
                     score = 0;
+                  
+
                     
                 }
                 score -= score / 2;
-                
+
+                youSuckFlag = true;
+                if (youSuckFlag && score == 0)
+                {
+                    Time.timeScale = 0;
+                    gameover.SetActive(true);
+
+                }
+                scoreText.text = "Score: "+score;
             }
             Debug.Log("speedCount: " + speedCount);
             

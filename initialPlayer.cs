@@ -26,7 +26,18 @@ public class initialPlayer : MonoBehaviour {
         //}
         
         transform.position += Vector3.forward * speed * Time.deltaTime;
+
         
+        if(Input.acceleration.x > 0 )
+        {
+            double x_comp =  3.3f;
+            transform.position = new Vector3((float)x_comp, transform.position.y, transform.position.z);
+        }
+        if(Input.acceleration.x < 0)
+        {
+            double x_comp = -3.3f;
+            transform.position = new Vector3((float)x_comp, transform.position.y, transform.position.z);
+        }
 
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {

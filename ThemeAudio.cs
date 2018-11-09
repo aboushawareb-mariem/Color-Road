@@ -6,24 +6,37 @@ public class ThemeAudio : MonoBehaviour {
 
     public AudioClip MusicClip;
     public AudioSource MusicSource;
-    //GameObject canvas;
-    //CanvasMethods canvasScript;
+    GameObject sphere;
+    SpawnTiles spawntiles;
     // Use this for initialization
     void Start () {
 
-        //canvas = GameObject.Find("Canvas");
-        //canvasScript = canvas.GetComponent<CanvasMethods>();
+        sphere = GameObject.Find("Sphere");
+        spawntiles = sphere.GetComponent<SpawnTiles>();
 
 
         MusicSource.clip = MusicClip;
+        if( spawntiles.muted == false)
+        {
             MusicSource.Play();
+
+        }
+        else
+        {
+            MusicSource.Stop();
+        }
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if(!MusicSource.isPlaying) // &&  canvasScript == false
+        if(!MusicSource.isPlaying && spawntiles.muted == false) // &&  canvasScript == false
         {
             MusicSource.Play();
+        }
+
+        if(spawntiles.muted == true)
+        {
+            MusicSource.Stop();
         }
             
         
