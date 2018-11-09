@@ -3,26 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class initialPlayer : MonoBehaviour {
-
+    
     int scoreTemp;
-    private float speed = 2f;
+    public float speed = 2f;
     SpawnTiles spawnTiles;
-    GameObject player;
+   // GameObject player;
     // Use this for initialization
     void Start () {
-        player = GameObject.FindGameObjectWithTag("Player");
-        spawnTiles = player.GetComponent<SpawnTiles>();
+        //player = GameObject.FindGameObjectWithTag("Player");
+        //spawnTiles = player.GetComponent<SpawnTiles>();
 
     }
 	
 	// Update is called once per frame
 	void Update () {
-        scoreTemp = spawnTiles.score;
-        if(scoreTemp == 50)
-        {
-            scoreTemp = 0;
-            speed *= 1.1f;
-        }
+        //scoreTemp = spawnTiles.score;
+        //if(scoreTemp >= 50)
+        //{
+        //    scoreTemp = spawnTiles.score - 50;
+        //    Debug.Log("speed: "+ speed);
+        //    speed *= 1.1f;
+        //}
+        
         transform.position += Vector3.forward * speed * Time.deltaTime;
         
 

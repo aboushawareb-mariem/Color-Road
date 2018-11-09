@@ -4,16 +4,31 @@ using UnityEngine;
 
 public class SpawnTiles : MonoBehaviour
 {
+    public AudioClip MusicClipGain;
+    public AudioClip MusicClipLose;
+    public AudioClip MusicClipColorZone;
+    public AudioSource MusicSourceGain;
+    public AudioSource MusicSourceLose;
+    public AudioSource MusicSourceColorZone;
+
     Material m_Material;
     public GameObject planeTransform;
     public GameObject collectable;
+    GameObject player;
     public int score;
+    private int speedCount;
+    initialPlayer initialplayer;
 
     // Use this for initialization
     void Start()
     {
-        m_Material = GetComponent<Renderer>().material;
+        MusicSourceGain.clip = MusicClipGain;
+        MusicSourceLose.clip = MusicClipLose;
+        MusicSourceColorZone.clip = MusicClipColorZone;
 
+        player = GameObject.FindGameObjectWithTag("Player");
+        initialplayer = player.GetComponent<initialPlayer>();
+        m_Material = GetComponent<Renderer>().material;
         InvokeRepeating("SpawnCollectable", 2.0f, 1f);
     }
 
@@ -27,11 +42,13 @@ public class SpawnTiles : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("I;m sick");
+       // Debug.Log("I;m sick");
 
         if (other.gameObject.CompareTag("Spawner"))
         {
-            Debug.Log("sadder");
+            //   Debug.Log("sadder");
+
+            MusicSourceColorZone.Play();
             SpawnTile();
             m_Material.color = other.gameObject.GetComponent<Renderer>().material.color;
 
@@ -49,24 +66,44 @@ public class SpawnTiles : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
 
-        Debug.Log("what the heck");
+        //Debug.Log("what the heck");
         if (collision.gameObject.CompareTag("Collectable"))
         {
-
+           
             //Debug.Log("BRACE");
             Destroy(collision.transform.gameObject);
             if (collision.gameObject.GetComponent<Renderer>().material.color == m_Material.color)
             {
+                MusicSourceGain.Play();
                 score += 10;
+                speedCount ++;
+                if (speedCount >= 5)
+                {
+                    speedCount =0;
+                    initialplayer.speed *= 2;
+                    
+                    Debug.Log("speed: " + initialplayer.speed);
+                }
             }
             else
             {
-                score -= score / 2;
-                if (score < 0)
+
+                MusicSourceLose.Play();
+                speedCount--;
+                if(speedCount < 0)
+                {
+                    speedCount = 0;
+                }
+                if (score == 1)
                 {
                     score = 0;
+                    
                 }
+                score -= score / 2;
+                
             }
+            Debug.Log("speedCount: " + speedCount);
+            
         }
     }
 
@@ -77,7 +114,7 @@ public class SpawnTiles : MonoBehaviour
         go = Instantiate(planeTransform);
         float z = transform.position.z + 10f;
         go.transform.position = new Vector3(0, 0, z);
-        Debug.Log("sad");
+        //Debug.Log("sad");
 
 
     }
